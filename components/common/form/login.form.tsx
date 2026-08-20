@@ -2,18 +2,29 @@
 import React from 'react'
 import Input from '../ui/input'
 import {useForm} from 'react-hook-form'
+// import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { loginSchema } from '@/schema/auth.schema'
+import { TLogin } from '@/types/auth.types'
 
-type TLogin={
-  email:string,
-  password:string
-}
+// type TLogin={
+//   email:string,
+//   password:string
+// }
+
+// const loginSchema=yup.object({
+//   email:yup.string().email('Invalid email format').required('email is required'),
+//   password:yup.string().required()
+// })
+
 const LoginForm = () => {
 
-  const {register,watch,handleSubmit}=useForm<TLogin>({
+  const {register,watch,handleSubmit,formState: { errors }}=useForm<TLogin>({
     defaultValues:{
       email:'',
       password:''
-    }
+    },
+    resolver:yupResolver(loginSchema)
   })
 
   const onSubmit=(data:TLogin)=>{
@@ -27,7 +38,8 @@ const LoginForm = () => {
 
             {/*email input */}
             
-            <Input register={register} id='email' label='email' name='email' placeholder='your@gmail.com' type='email'/>
+            <Input register={register} id='email' label='email' name='email' placeholder='your@gmail.com' type='text' error={errors.email?.message} />
+             
 
             {/* <div>
                 <label htmlFor='email'>Email</label>
@@ -38,7 +50,7 @@ const LoginForm = () => {
             
             {/*password input */}
 
-              <Input register={register} id='password' label='password' name='password' placeholder='your password' type='password'/>
+              <Input register={register} id='password' label='password' name='password' placeholder='your password' type='password' error={errors.password?.message}/>
 
               {/* <div>
                 <label htmlFor='password'>Password</label>
