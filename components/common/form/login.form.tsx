@@ -1,13 +1,33 @@
+'use client'
 import React from 'react'
 import Input from '../ui/input'
+import {useForm} from 'react-hook-form'
+
+type TLogin={
+  email:string,
+  password:string
+}
 const LoginForm = () => {
+
+  const {register,watch,handleSubmit}=useForm<TLogin>({
+    defaultValues:{
+      email:'',
+      password:''
+    }
+  })
+
+  const onSubmit=(data:TLogin)=>{
+    console.log('form submitted',data);
+  }
+
+
   return (
     <div>
-        <form className='flex flex-col gap-6 mt-4'>
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6 mt-4'>
 
             {/*email input */}
             
-            <Input id='email' label='email' name='email' placeholder='your@gmail.com' type='email'/>
+            <Input register={register} id='email' label='email' name='email' placeholder='your@gmail.com' type='email'/>
 
             {/* <div>
                 <label htmlFor='email'>Email</label>
@@ -18,7 +38,7 @@ const LoginForm = () => {
             
             {/*password input */}
 
-              <Input id='password' label='password' name='password' placeholder='your password' type='password'/>
+              <Input register={register} id='password' label='password' name='password' placeholder='your password' type='password'/>
 
               {/* <div>
                 <label htmlFor='password'>Password</label>
