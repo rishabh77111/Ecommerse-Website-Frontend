@@ -1,4 +1,6 @@
+
 import LoginForm from "@/components/common/form/login.form";
+// import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -6,6 +8,8 @@ export const metadata:Metadata={
     title:"Login | Ecommerse App",
     description:"Ecommerse App Login Page"
 }
+
+// const queryClient = new QueryClient();
 
 const LoginPage = () => {
   return (
@@ -19,7 +23,10 @@ const LoginPage = () => {
           </div>
 
           {/*form */}
-          <LoginForm/>
+          {/* <QueryClientProvider client={queryClient}> */}
+              <LoginForm/>
+          {/* </QueryClientProvider> */}
+          
 
            {/*  */}
            <div>

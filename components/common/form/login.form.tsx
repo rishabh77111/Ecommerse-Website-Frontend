@@ -6,6 +6,10 @@ import {useForm} from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { loginSchema } from '@/schema/auth.schema'
 import { TLogin } from '@/types/auth.types'
+import { login } from '@/api/auth.api'
+import { useMutation } from '@tanstack/react-query'
+import { error } from 'console'
+import toast from 'react-hot-toast'
 
 // type TLogin={
 //   email:string,
@@ -27,8 +31,32 @@ const LoginForm = () => {
     resolver:yupResolver(loginSchema)
   })
 
-  const onSubmit=(data:TLogin)=>{
-    console.log('form submitted',data);
+  //* mutation
+  const {mutate,data,isPending,error}=useMutation({
+    mutationFn:login,
+    onSuccess:(data)=>{  //here response =data
+        console.log("login Success",data);
+        toast.success(data?.message ?? "Login Success");
+    },
+    onError:(error)=>{
+      console.log("login error",error)
+      toast.error(data?.message ?? "Login Failed");
+    }
+  })
+
+  const onSubmit=async(data:TLogin)=>{
+
+
+
+    mutate(data);
+    // console.log('form submitted',data);
+
+    // try {
+
+    //   const response=await login(data)
+    // } catch (error) {
+    //   console.log(error)
+    // }
   }
 
 

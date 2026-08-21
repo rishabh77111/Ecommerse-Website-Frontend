@@ -1,15 +1,34 @@
+'use client'
 import React from 'react'
 import Input from '../ui/input'
+import {useForm} from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { registerSchema } from '@/schema/auth.schema'
 const RegisterForm = () => {
+
+  const {register,watch,handleSubmit,formState: { errors }}=useForm({
+    defaultValues: {
+            full_name: '',
+            email: '',
+            password: '',
+            c_password: '',
+            phone: '',
+    },
+    resolver:yupResolver(registerSchema)
+  })
+
   return (
     <div>
-        <form className='flex flex-col gap-6 mt-4'>
+        <form  onSubmit={handleSubmit((data) => {
+            console.log(data)
+          })}
+          className='flex flex-col gap-6 mt-4'>
 
-            <Input id='full_name' label='full_name' name='full_name' placeholder='your full_name' type='text'/>
+            <Input register={register} id='full_name' label='full_name' name='full_name' placeholder='your full_name' type='text' error={errors.full_name?.message}/>
 
             {/*email input */}
             
-            <Input id='email' label='email' name='email' placeholder='your@gmail.com' type='email'/>
+            <Input register={register} id='email' label='email' name='email' placeholder='your@gmail.com' type='text' error={errors.email?.message}/>
 
             {/* <div>
                 <label htmlFor='email'>Email</label>
@@ -20,7 +39,7 @@ const RegisterForm = () => {
             
             {/*password input */}
 
-              <Input id='password' label='password' name='password' placeholder='your password' type='password'/>
+              <Input register={register} id='password' label='password' name='password' placeholder='your password' type='password' error={errors.password?.message}/>
 
               {/* <div>
                 <label htmlFor='password'>Password</label>
@@ -28,9 +47,10 @@ const RegisterForm = () => {
                 </input>
             </div> */}
 
-             <Input id='c_password' label='password' name='c_password' placeholder='retype your password' type='password'/>
+             <Input register={register} id='c_password' label='password' name='c_password' placeholder='retype your password ' type='password' error={errors.c_password?.message}/>
 
-              <Input id='phone' label='phone' name='phone' placeholder='XXXXXXXXXX' type='text'/>
+              <Input register={register} id='phone' label='phone' name='phone' placeholder='XXXXXXXXXX' type='text' error={errors.phone?.message}/>
+              
             
 
             
