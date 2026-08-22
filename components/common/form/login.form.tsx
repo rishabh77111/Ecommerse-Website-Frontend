@@ -1,101 +1,80 @@
 'use client'
-import React from 'react'
 import Input from '../ui/input'
-import {useForm} from 'react-hook-form'
-// import * as yup from 'yup'
+import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { loginSchema } from '@/schema/auth.schema'
 import { TLogin } from '@/types/auth.types'
 import { login } from '@/api/auth.api'
 import { useMutation } from '@tanstack/react-query'
-import { error } from 'console'
 import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
-// type TLogin={
-//   email:string,
-//   password:string
-// }
-
-// const loginSchema=yup.object({
-//   email:yup.string().email('Invalid email format').required('email is required'),
-//   password:yup.string().required()
-// })
 
 const LoginForm = () => {
+    const router = useRouter()
+    const { register, handleSubmit, formState: { errors } } = useForm<TLogin>({
+        defaultValues: {
+            email: '',
+            password: ''
+        },
+        resolver: yupResolver(loginSchema)
+    })
 
-  const {register,watch,handleSubmit,formState: { errors }}=useForm<TLogin>({
-    defaultValues:{
-      email:'',
-      password:''
-    },
-    resolver:yupResolver(loginSchema)
-  })
+    //* mutation
+    const { mutate, isPending } = useMutation({
+        mutationFn: login,
+        onSuccess: (data) => {
+            toast.success(data?.message ?? 'Login success')
+            router.replace('/')
+        },
+        onError: (error) => {
+            toast.error(error?.message ?? 'Login failed')
+        }
+    })
 
-  //* mutation
-  const {mutate,data,isPending,error}=useMutation({
-    mutationFn:login,
-    onSuccess:(data)=>{  //here response =data
-        console.log("login Success",data);
-        toast.success(data?.message ?? "Login Success");
-    },
-    onError:(error)=>{
-      console.log("login error",error)
-      toast.error(data?.message ?? "Login Failed");
+    // on submit
+    const onSubmit = async (data: TLogin) => {
+        mutate(data)
     }
-  })
 
-  const onSubmit=async(data:TLogin)=>{
+    return (
+        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-5 mt-4' >
+            {/* email input */}
+            <Input
+                register={register}
+                id='email'
+                label='Email'
+                name='email'
+                placeholder='johndoe@gmail.com'
+                type='text'
+                error={errors?.email?.message}
+            />
 
+            {/* password input */}
+            <Input
+                // onChange={onChange}
+                register={register}
+                id='password'
+                name='password'
+                label='Password'
+                placeholder='enter your password'
+                type={'password'}
+                error={errors?.password?.message}
 
+            />
 
-    mutate(data);
-    // console.log('form submitted',data);
-
-    // try {
-
-    //   const response=await login(data)
-    // } catch (error) {
-    //   console.log(error)
-    // }
-  }
-
-
-  return (
-    <div>
-        <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-6 mt-4'>
-
-            {/*email input */}
-            
-            <Input register={register} id='email' label='email' name='email' placeholder='your@gmail.com' type='text' error={errors.email?.message} />
-             
-
-            {/* <div>
-                <label htmlFor='email'>Email</label>
-                <input name='email' placeholder='your@gmail.com' type='email' id='email'>
-                </input>
-            </div> */}
-
-            
-            {/*password input */}
-
-              <Input register={register} id='password' label='password' name='password' placeholder='your password' type='password' error={errors.password?.message}/>
-
-              {/* <div>
-                <label htmlFor='password'>Password</label>
-                <input name='password' placeholder='your_password' type='password' id='password'>
-                </input>
-            </div> */}
-            
-
-            
-            {/*submit input */}
-            <div className='mt-5'>
-                <button type={'submit'} className='bg-sky-500 text-white font-bold w-full py-3 cursor-pointer rounded-sm hover:bg-sky-400 active:bg-sky-600 transition-all duration-300'>Login</button>
+            {/* submit button */}
+            <div className='mt-3'>
+                <button
+                    type={'submit'}
+                    className='bg-sky-500 text-white  font-bold w-full py-3  cursor-pointer rounded-sm hover:bg-sky-400
+                             active:bg-sky-600 transition-all duration-300'
+                >
+                    Login
+                </button>
             </div>
-
         </form>
-    </div>
-  )
+    )
 }
 
 export default LoginForm
